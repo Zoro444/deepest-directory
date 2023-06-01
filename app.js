@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from "path";
 
 async function getDeepestDir() {
   let currentDeep = 0;
@@ -25,7 +26,7 @@ async function getDeepestDir() {
             deepFile.deep = deep;
             deepFile.filePath = currentDirectory;
           }
-          await getDeep(currentDeep, `${currentDirectory}/${dir}`);
+          await getDeep(currentDeep, path.join(currentDirectory, dir));
           currentDeep--;
         }
       }
@@ -34,16 +35,16 @@ async function getDeepestDir() {
     }
   }
 
-  await getDeep(currentDeep, './node_modules');
+  await getDeep(currentDeep, path.resolve('node_modules'));
   return deepFile;
 }
 getDeepestDir()
-  .then(result => {
-    return fs.promises.writeFile(`${result.filePath}/test.txt`, 'Hello World!');
+  .then((result) => {
+    return fs.promises.writeFile(path.join(result.filePath, 'test.txt'), 'Hello World!');
   })
   .then(() => {
     console.log('File created successfully!');
   })
-  .catch(error => {
+  .catch((error) => {
     console.error(error);
   });
